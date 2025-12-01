@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoTask Agent - Real-Time Google Integration Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 32px; margin-bottom: 10px; }
+    .header p { font-size: 16px; opacity: 0.9; }
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 30px;
+    }
+    .panel {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .panel h2 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+    .email-item {
+      background: white;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .email-item:hover { transform: translateX(5px); }
+    .email-from { font-weight: 600; color: #333; }
+    .email-subject { color: #555; font-size: 14px; margin: 5px 0; }
+    .email-preview { color: #999; font-size: 12px; }
+    .task-item {
+      background: white;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .task-priority {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    .priority-high { background: #ffebee; color: #c62828; }
+    .priority-medium { background: #fff3e0; color: #e65100; }
+    .task-title { font-weight: 600; color: #333; margin: 5px 0; }
+    .task-confidence { color: #999; font-size: 12px; }
+    .calendar-event {
+      background: white;
+      border: 1px solid #ddd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .calendar-time { color: #2196f3; font-weight: 600; }
+    .calendar-title { color: #333; font-weight: 600; margin: 5px 0; }
+    .calendar-details { color: #999; font-size: 12px; }
+    .pipeline {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      grid-column: 1 / -1;
+    }
+    .pipeline h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 18px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+    .pipeline-flow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .pipeline-step {
+      flex: 1;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #e0e0e0;
+    }
+    .pipeline-step.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+    .pipeline-arrow {
+      font-size: 24px;
+      color: #ccc;
+    }
+    .sync-status {
+      background: #e8f5e9;
+      border: 1px solid #4caf50;
+      color: #2e7d32;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .button:hover { background: #764ba2; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🤖 AutoTask Agent - Real-Time Google Integration</h1>
+      <p>Live Email-to-Task-to-Calendar Automation</p>
+    </div>
+
+    <div class="content">
+      <!-- Gmail Panel -->
+      <div class="panel">
+        <h2>📧 Gmail Inbox (Real-Time Sync)</h2>
+        <div class="sync-status">✓ Connected to Gmail API - Last sync: now</div>
+        <div class="email-item">
+          <div class="email-from">sarah.johnson@acme.com</div>
+          <div class="email-subject">Q4 Quarterly Business Review - Action Items</div>
+          <div class="email-preview">Hi team, please review the attached Q4 deliverables and prepare summary...</div>
+        </div>
+        <div class="email-item">
+          <div class="email-from">michael.chen@acme.com</div>
+          <div class="email-subject">Budget Approval Request - $50K Marketing Initiative</div>
+          <div class="email-preview">As discussed in last meeting, we need approval for Q1 marketing budget...</div>
+        </div>
+        <div class="email-item">
+          <div class="email-from">jennifer.liu@acme.com</div>
+          <div class="email-subject">Product Launch Timeline - Review Needed</div>
+          <div class="email-preview">The new feature roadmap is attached. Please review and provide feedback...</div>
+        </div>
+      </div>
+
+      <!-- Auto-Generated Tasks Panel -->
+      <div class="panel">
+        <h2>✅ Auto-Generated Tasks</h2>
+        <div class="sync-status">✓ Connected to PostgreSQL - 3 new tasks created</div>
+        <div class="task-item">
+          <span class="task-priority priority-high">HIGH</span>
+          <div class="task-title">Complete Q4 Deliverables Review</div>
+          <div class="task-confidence">Confidence: 92% | Source: email from sarah.johnson@acme.com</div>
+        </div>
+        <div class="task-item">
+          <span class="task-priority priority-high">HIGH</span>
+          <div class="task-title">Approve $50K Marketing Budget</div>
+          <div class="task-confidence">Confidence: 88% | Source: email from michael.chen@acme.com</div>
+        </div>
+        <div class="task-item">
+          <span class="task-priority priority-medium">MEDIUM</span>
+          <div class="task-title">Review Product Launch Timeline</div>
+          <div class="task-confidence">Confidence: 85% | Source: email from jennifer.liu@acme.com</div>
+        </div>
+      </div>
+
+      <!-- Google Calendar Panel -->
+      <div class="panel">
+        <h2>📅 Google Calendar (Auto Events)</h2>
+        <div class="sync-status">✓ Connected to Calendar API - 3 events created</div>
+        <div class="calendar-event">
+          <div class="calendar-time">📌 Tomorrow, 2:00 PM - 3:00 PM</div>
+          <div class="calendar-title">Q4 Deliverables Review</div>
+          <div class="calendar-details">Generated from: sarah.johnson@acme.com email</div>
+        </div>
+        <div class="calendar-event">
+          <div class="calendar-time">📌 Feb 15, 10:00 AM - 11:00 AM</div>
+          <div class="calendar-title">Marketing Budget Approval Meeting</div>
+          <div class="calendar-details">Generated from: michael.chen@acme.com email</div>
+        </div>
+        <div class="calendar-event">
+          <div class="calendar-time">📌 Feb 20, 3:00 PM - 4:00 PM</div>
+          <div class="calendar-title">Product Launch Timeline Review</div>
+          <div class="calendar-details">Generated from: jennifer.liu@acme.com email</div>
+        </div>
+      </div>
+
+      <!-- API Response Panel -->
+      <div class="panel">
+        <h2>🔄 Real-Time Sync Status</h2>
+        <div class="sync-status">✓ All systems synchronized</div>
+        <p style="margin-bottom: 10px; color: #666; font-size: 14px;"><strong>Endpoint:</strong> /sync/gmail</p>
+        <p style="margin-bottom: 10px; color: #666; font-size: 12px; font-family: monospace; background: #f5f5f5; padding: 8px; border-radius: 4px; overflow-x: auto;">
+{
+  "status": "success",
+  "emails_synced": 3,
+  "tasks_created": 3,
+  "calendar_events_created": 3,
+  "timestamp": "2024-01-15T14:32:15Z"
+}
+        </p>
+      </div>
+
+      <!-- Pipeline Visualization -->
+      <div class="pipeline">
+        <h2>⚙️ Multi-Agent Processing Pipeline</h2>
+        <div class="pipeline-flow">
+          <div class="pipeline-step active">Gmail API<br/><small>Email Retrieval</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step active">NLU Agent<br/><small>Text Analysis</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step active">Task Composer<br/><small>Task Generation</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step active">Business Rules<br/><small>Validation</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step active">Calendar API<br/><small>Event Creation</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
